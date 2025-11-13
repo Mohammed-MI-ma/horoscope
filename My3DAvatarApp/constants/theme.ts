@@ -1,53 +1,71 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+import chroma from "chroma-js";
+import { extendTheme, ITheme, useColorModeValue } from "native-base";
+import fontSizes from "./fontSizes";
 
-import { Platform } from 'react-native';
+export const PRIMARY_COLOR = "#37353E";
+export const DEFAULT_TEXT_COLOR = "#FFFFFF";
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Utility to generate color scales (lighter to darker)
+const generateColorScale = (baseColor: string) => {
+  const scale = chroma
+    .scale([
+      chroma(baseColor).brighten(3).hex(),
+      baseColor,
+      chroma(baseColor).darken(3).hex(),
+    ])
+    .mode("lab")
+    .colors(10)
+    .map((c) => chroma(c).hex());
 
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+  return {
+    50: scale[0],
+    100: scale[1],
+    200: scale[2],
+    300: scale[3],
+    400: scale[4],
+    500: scale[5],
+    600: scale[6],
+    700: scale[7],
+    800: scale[8],
+    900: scale[9],
+  } as const;
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+const primaryShades = generateColorScale(PRIMARY_COLOR);
+
+const customTheme: ITheme = extendTheme({
+  colors: {
+    primary: primaryShades,
+    text: {
+      primary: PRIMARY_COLOR,
+      secondary: DEFAULT_TEXT_COLOR,
+    },
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  fontSizes,
+  semanticTokens: {
+    colors: {
+      background: {
+        default: primaryShades[900],
+        _light: "red",
+        _dark:"red",
+      },
+      invertedText: {
+        default: PRIMARY_COLOR,
+        _light: PRIMARY_COLOR,
+        _dark: "#FFFFFF",
+      },
+    },
   },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: false,
   },
 });
+export const useGlobalBg = () => {
+  return useColorModeValue(primaryShades[500], primaryShades[50]);
+};
+export const useGlobalBgInverted = () => {
+  return useColorModeValue(primaryShades[50], primaryShades[500]);
+};
+export default customTheme;
+export { fontSizes, primaryShades };
