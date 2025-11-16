@@ -20,10 +20,8 @@ const GlobalStatusBar: React.FC<GlobalStatusBarProps> = ({
   const isDarkMode = colorMode === "dark";
   const bg = useGlobalBgInverted();
 
-  const finalBg = backgroundColor || bg;
-  const barStyle: StatusBarStyle = isDarkMode
-    ? "light-content"
-    : "dark-content";
+  const finalBg = "black"
+  const barStyle: StatusBarStyle = "light-content"
 
   // ✅ Force reapply style on every theme change
   useEffect(() => {

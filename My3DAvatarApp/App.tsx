@@ -22,6 +22,7 @@ import i18n from "./utils/initializeI18n";
 import AppInner from "./AppInner";
 import GlobalLoader from "./components/atomic/GlobalLoader/GlobalLoader";
 import customTheme from "./constants/theme";
+import { AssetsProvider } from "./contexts/AssetsContext";
 import { FontProvider } from "./contexts/FontProvider";
 import { GlobalLoaderProvider } from "./contexts/GlobalLoaderContext";
 import { RTLProvider } from "./contexts/RTLContext";
@@ -57,13 +58,15 @@ export default function App(): JSX.Element {
                     <FontProvider>
                       <I18nProvider>
                         <RTLProvider>
-                          <Suspense
-                            fallback={
-                              <GlobalLoader message="Loading assets..." />
-                            }
-                          >
-                            <AppInner />
-                          </Suspense>
+                          <AssetsProvider>
+                            <Suspense
+                              fallback={
+                                <GlobalLoader message="Loading assets..." />
+                              }
+                            >
+                              <AppInner />
+                            </Suspense>
+                          </AssetsProvider>
                         </RTLProvider>
                       </I18nProvider>
                     </FontProvider>

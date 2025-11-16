@@ -1,30 +1,34 @@
 // src/providers/FontProvider.tsx
-import GlobalLoader from "@/components/atomic/GlobalLoader/GlobalLoader";
-import { useFonts } from "expo-font";
-import React, { createContext, useEffect } from "react";
+import * as Font from "expo-font";
+import React, { createContext, useEffect, useState } from "react";
+import { Text } from "react-native";
 import { useDispatch } from "react-redux";
 import { setFontsLoaded } from "../redux/applicationSlice";
 
 export const FontContext = createContext({ fontsLoaded: false });
 
 export const FontProvider = ({ children }: { children: React.ReactNode }) => {
+  const [fontsLoaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
 
-  // Load fonts with the hook
-  const [fontsLoaded] = useFonts({
-    "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
-    "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
-  });
-
-  // Dispatch Redux action when fonts are loaded
   useEffect(() => {
-    if (fontsLoaded) {
-      dispatch(setFontsLoaded(true));
-    }
-  }, [fontsLoaded, dispatch]);
+    const loadFonts = async () => {
+      try {
+        await Font.loadAsync({
+          "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
+          "Inter-Regular": require("../assets/fonts/Oswald-Regular.ttf"),
+          "alfont_com_DARK": require("../assets/fonts/alfont_com_DARK.ttf"),
+        });
+        setLoaded(true);
+        dispatch(setFontsLoaded(true));
+      } catch (err) {
+        console.error("Error loading fonts:", err);
+      }
+    };
+    loadFonts();
+  }, [dispatch]);
 
-  // Show loader while fonts are loading
-  if (!fontsLoaded) return <GlobalLoader message="Loading fonts..." />;
+  if (!fontsLoaded) return <Text>Loading fonts...</Text>;
 
   return (
     <FontContext.Provider value={{ fontsLoaded }}>
