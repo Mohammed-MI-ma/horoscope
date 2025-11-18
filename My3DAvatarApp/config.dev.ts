@@ -17,3 +17,7 @@ export async function preloadGlobalAssets(): Promise<void> {
     console.error("❌ Global assets preload failed", e);
   }
 }
+
+export const RECAPTCHA = {
+  RECAPTCHA_SITE_KEY: "6LcU5eEpAAAAAPk6wrf62DlxuUrtPtFNlRLUE42u",
+};

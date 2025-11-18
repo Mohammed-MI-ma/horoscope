@@ -25,6 +25,7 @@ import customTheme from "./constants/theme";
 import { AssetsProvider } from "./contexts/AssetsContext";
 import { FontProvider } from "./contexts/FontProvider";
 import { GlobalLoaderProvider } from "./contexts/GlobalLoaderContext";
+import { MessageProvider } from "./contexts/MessageProvider";
 import { RTLProvider } from "./contexts/RTLContext";
 import { setDarkMode } from "./redux/applicationSlice";
 import { RootStateType, persistor, store } from "./store";
@@ -59,13 +60,15 @@ export default function App(): JSX.Element {
                       <I18nProvider>
                         <RTLProvider>
                           <AssetsProvider>
-                            <Suspense
-                              fallback={
-                                <GlobalLoader message="Loading assets..." />
-                              }
-                            >
-                              <AppInner />
-                            </Suspense>
+                            <MessageProvider>
+                              <Suspense
+                                fallback={
+                                  <GlobalLoader message="Loading assets..." />
+                                }
+                              >
+                                <AppInner />
+                              </Suspense>
+                            </MessageProvider>
                           </AssetsProvider>
                         </RTLProvider>
                       </I18nProvider>

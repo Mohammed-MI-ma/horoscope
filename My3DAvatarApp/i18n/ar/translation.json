@@ -10,5 +10,20 @@
     "agreeTerms": "أوافق على شروط وأحكام المستخدم وأقر بإشعار الخصوصية لتطبيق NOJOM المقدم من Tools for Humanity",
     "newAccount": "حساب جديد",
     "existingAccount": "حساب موجود"
+  },
+  "loginScreen": {
+    "connectedSuccessfully": "تم الاتصال بنجاح"
+  },
+  "auth": {
+    "invalidEmail": "البريد الإلكتروني غير صالح",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "passwordMin": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "recaptchaRequired": "يرجى إكمال reCAPTCHA",
+    "loginButton": "تسجيل الدخول",
+    "loginTitle": "تسجيل الدخول",
+    "pleaseLogin": "يرجى تسجيل الدخول إلى حسابك",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور"
   }
 }

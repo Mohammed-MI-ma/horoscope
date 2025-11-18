@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.mohammedmima.My3DAvatarApp"
     },
     "web": {
       "output": "static",
@@ -43,6 +44,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "96cf7ff1-e8de-46fa-8a34-77bdb9da4fd6"
+      }
     }
   }
 }

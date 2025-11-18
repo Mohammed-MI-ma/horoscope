@@ -13,7 +13,8 @@ import { bottomDrawerStyles as styles } from "../styles/BottomDrawer.styles";
 
 import { BottomDrawerProps } from "@/types/BottomDrawer.types";
 import Arrow from "../../../assets/svg/arrow.svg";
-import { useBottomDrawerController } from "../contoller/BottomDrawer.controller";
+import { useBottomDrawerController } from "../controller/BottomDrawer.controller";
+console.log("🔥 BottomDrawer.ui.ts LOADED");
 
 export default function BottomDrawer({ currentRouteName }: BottomDrawerProps) {
   const { t } = useTranslation();
@@ -23,8 +24,7 @@ export default function BottomDrawer({ currentRouteName }: BottomDrawerProps) {
   const { bottomSheetRef, snapPoints, handleSheetChange, loadedAssets } =
     useBottomDrawerController(currentRouteName);
 
-  if (!loadedAssets) return null;
-
+  console.log(bottomSheetRef, snapPoints, handleSheetChange);
   const handleNavigateToLogin = () => {
     startTransition(() => {
       navigationRef.navigate("LoginScreen");
@@ -36,6 +36,7 @@ export default function BottomDrawer({ currentRouteName }: BottomDrawerProps) {
   };
 
   return (
+    <>
     <Portal>
       <BottomSheet
         ref={bottomSheetRef}
@@ -47,7 +48,6 @@ export default function BottomDrawer({ currentRouteName }: BottomDrawerProps) {
         style={styles.bottomSheet}
       >
         <BottomSheetView style={styles.content}>
-
           {/* Logo */}
           <Image
             source={{ uri: loadedAssets.logoD }}
@@ -56,7 +56,6 @@ export default function BottomDrawer({ currentRouteName }: BottomDrawerProps) {
           />
 
           <View style={styles.actionContainer}>
-
             {/* Agree Checkbox */}
             <Checkbox value="agree" colorScheme="primary" size="lg">
               <Text style={{ fontFamily: regularFont }}>
@@ -87,10 +86,9 @@ export default function BottomDrawer({ currentRouteName }: BottomDrawerProps) {
                 </Text>
               </View>
             </PressableMoti>
-
           </View>
         </BottomSheetView>
       </BottomSheet>
-    </Portal>
+    </Portal></>
   );
 }

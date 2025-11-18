@@ -16,10 +16,10 @@ import { AnimatePresence, MotiView } from "moti";
 import { styles } from "./onBoardingScreen.styles";
 
 import CardGrid from "@/components/atomic/CardGrid/CardGrid";
+import { DarkModeToggle } from "@/components/atomic/DarkModeToggle/DarkModeToggle";
+import GetTipsButton from "@/components/feature/GetTipsButton/controller/GetTipsButtonContoller";
 import { useAssets } from "@/contexts/AssetsContext";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
-import { Button } from "native-base";
-import Tips from "../../assets/svg/tips.svg";
 
 // Types
 interface OnBoardingScreenProps {
@@ -28,7 +28,7 @@ interface OnBoardingScreenProps {
   };
 }
 
-export default function onBoardingScreen({
+export default function OnBoardingScreen({
   navigation,
 }: OnBoardingScreenProps) {
   const { t }: { t: TFunction } = useTranslation();
@@ -71,7 +71,7 @@ export default function onBoardingScreen({
         >
           <SafeAreaProvider>
             <SafeAreaView style={styles.container}>
-              <GlobalStatusBar />
+              <GlobalStatusBar backgroundColor="black" />
               <BackgroundGradient loadedAssets={loadedAssets}>
                 <Image
                   source={{ uri: loadedAssets.planet1 }}
@@ -99,33 +99,23 @@ export default function onBoardingScreen({
                       style={[{ width: 50, height: 20 }]}
                       resizeMode="contain"
                     />
-                    <Button
+                    <View
                       style={{
-                        borderRadius: 50,
-                        boxShadow: "10px 10px 30px rgba(0, 0, 0, 0.3)",
-                        height: 40,
+                        flexDirection: "row",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 10,
                       }}
                     >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
+                   
+                      <GetTipsButton
+                        onPress={() => {
+                          console.log("first");
                         }}
-                      >
-                        <Tips width={25} height={25} style={{ marginTop: 8 }} />
-                        <Text
-                          style={{
-                            fontFamily: boldFont,
-                            color: "white",
-                            fontSize: 12,
-                          }}
-                        >
-                          {t("GetTips")}
-                        </Text>
-                      </View>
-                    </Button>
+                      />
+                      <DarkModeToggle />
+                    </View>
                   </View>
                   <View style={{ marginTop: 20, marginBottom: 20 }}>
                     <Text
@@ -164,7 +154,8 @@ export default function onBoardingScreen({
                           style={{
                             fontFamily: boldFont,
                             color: "white",
-                            fontSize: 12,textDecorationLine: "underline",
+                            fontSize: 12,
+                            textDecorationLine: "underline",
                           }}
                         >
                           {t("see_more")}
@@ -177,10 +168,8 @@ export default function onBoardingScreen({
               </BackgroundGradient>
             </SafeAreaView>
           </SafeAreaProvider>
-          
         </MotiView>
       )}
-
     </AnimatePresence>
   );
 }

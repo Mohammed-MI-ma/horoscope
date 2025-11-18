@@ -1,12 +1,7 @@
-import { useGlobalBgInverted } from "@/constants/theme";
 import { useColorMode } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { StatusBar, StatusBarStyle } from "react-native";
 
-/**
- * A global, theme-aware StatusBar component.
- * Works with both Expo and pure React Native.
- */
 interface GlobalStatusBarProps {
   translucent?: boolean;
   backgroundColor?: string;
@@ -17,21 +12,28 @@ const GlobalStatusBar: React.FC<GlobalStatusBarProps> = ({
   backgroundColor,
 }) => {
   const { colorMode } = useColorMode();
-  const isDarkMode = colorMode === "dark";
-  const bg = useGlobalBgInverted();
 
-  const finalBg = "black"
-  const barStyle: StatusBarStyle = "light-content"
+  // Determine background color
+  const finalBg = backgroundColor ?? (colorMode === "dark" ? "#000" : "#fff");
 
-  // ✅ Force reapply style on every theme change
+  // Determine bar style based on background
+  const barStyle: StatusBarStyle = useMemo(() => {
+    if (backgroundColor === "black" || colorMode === "dark") {
+      return "light-content";
+    }
+    return "dark-content";
+  }, [backgroundColor, colorMode]);
+
+  // Reapply on theme or barStyle change
   useEffect(() => {
     StatusBar.setBarStyle(barStyle, true);
   }, [barStyle]);
 
   return (
     <StatusBar
-      barStyle={"light-content"}
+      translucent={translucent}
       backgroundColor={finalBg}
+      barStyle={barStyle}
     />
   );
 };
