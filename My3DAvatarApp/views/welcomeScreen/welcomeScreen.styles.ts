@@ -1,24 +1,64 @@
-import theme from "@/constants/theme"; // ✅ Import your centralized theme and fontSizes
-import { StyleSheet, ViewStyle } from "react-native";
+// src/screens/welcomeScreen.styles.ts
+import { fontSizes, spacing } from "@/constants/theme";
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
-// Define a type for your styles object
+// Define a type for your styles
 interface Styles {
-  layer: ViewStyle;
   container: ViewStyle;
-
+  planetsWrapper: ViewStyle;
+  contentWrapper: ViewStyle;
+  logo: ImageStyle;
+  title: TextStyle;
+  subtitle: TextStyle;
+  button: ViewStyle;
+  CTAContainer: ViewStyle;
 }
 
 export const styles: Styles = StyleSheet.create<Styles>({
-  // ========================
-  // Base Layer Helpers
-  // ========================
-  layer: {
-    ...StyleSheet.absoluteFillObject, // Fill parent container
-  },
-
   container: {
     flex: 1,
     position: "relative",
-    backgroundColor: theme.colors.text[100], // fallback background
+  },
+  planetsWrapper: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  contentWrapper: {
+    padding: 20,
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    position: "relative",
+  },
+  logo: {
+    width: 75,
+    height: 32,
+    resizeMode: "contain",
+  },
+  title: {
+    fontSize: fontSizes["4xl"],
+    textAlign: "center",
+    marginBottom: spacing.lg,
+  },
+  subtitle: {
+    fontSize: fontSizes.xs,
+    textAlign: "center",
+  },
+  CTAContainer: {
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 50,
+    left: 0,
+    zIndex: 9999,
+    width: "100%",
+  },
+  button: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+    // Android elevation
+    elevation: 20,
+    position: "absolute",
   },
 });

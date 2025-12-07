@@ -1,6 +1,7 @@
 import { useAssets } from "@/contexts/AssetsContext";
 import { useAppFont } from "@/hooks/useAppFont";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   FlatList,
@@ -16,45 +17,55 @@ const CARD_MARGIN = 10;
 const NUM_COLUMNS = 2;
 const CARD_SIZE = (width - CARD_MARGIN * (NUM_COLUMNS + 1) - 10) / NUM_COLUMNS;
 
-const cards = [
-  { id: "card1", label: "تحليل الشخصية" },
-  { id: "card2", label: "تحليل الشخصية" },
-  { id: "card3", label: "تحليل الشخصية" },
-  { id: "card4", label: "تحليل الشخصية" },
-];
-
-
 export default function CardGrid() {
   const { loadedAssets } = useAssets();
   const boldFont = useAppFont("bold");
   const fontFamily = useAppFont();
+  const { t } = useTranslation();
+  const cards = [
+    {
+      id: "card1",
+      label: t("insights.relationship.title"),
+      subtitle: t("insights.relationship.subtitle"),
+    },
+    {
+      id: "card2",
+      label: t("insights.emotional_needs.title"),
+      subtitle: t("insights.emotional_needs.subtitle"),
+    },
+    {
+      id: "card3",
+      label: t("insights.how_others_see_you.title"),
+      subtitle: t("insights.how_others_see_you.subtitle"),
+    },
+ 
+  ];
 
   return (
-  <FlatList
-  data={cards}
-  keyExtractor={(item) => item.id}
-  numColumns={NUM_COLUMNS}
-  renderItem={({ item }) => (
-    <PressableMoti onPress={() => console.log("Pressed:", item.id)}>
-      <View style={styles.card}>
-        <Image
-          source={{ uri: loadedAssets.planet1 }}
-          resizeMode="contain"
-          style={{ width: 50, height: 50 }}
-        />
+    <FlatList
+      data={cards}
+      keyExtractor={(item) => item.id}
+      numColumns={NUM_COLUMNS}
+      renderItem={({ item }) => (
+        <PressableMoti onPress={() => console.log("Pressed:", item.id)}>
+          <View style={styles.card}>
+            <Image
+              source={{ uri: loadedAssets.planet1 }}
+              resizeMode="contain"
+              style={{ width: 50, height: 50 }}
+            />
 
-        <Text style={[styles.cardText, { fontFamily: boldFont }]}>
-          {item.label}
-        </Text>
+            <Text style={[styles.cardText, { fontFamily: boldFont }]}>
+              {item.label}
+            </Text>
 
-        <Text style={[styles.cardDesc, { fontFamily: fontFamily }]}>
-          أفضل تطبيق يجمع تطبيق تطبيق تطبيق تطبيق
-        </Text>
-      </View>
-    </PressableMoti>
-  )}
-/>
-
+            <Text style={[styles.cardDesc, { fontFamily: fontFamily }]}>
+              أفضل تطبيق يجمع تطبيق تطبيق تطبيق تطبيق
+            </Text>
+          </View>
+        </PressableMoti>
+      )}
+    />
   );
 }
 

@@ -18,7 +18,13 @@ const HeaderBack: React.FC<HeaderBackProps> = ({ onBack }) => {
   return (
     <View
       accessibilityRole="header"
-      style={[{ flexDirection: isRTL ? "row-reverse" : "row" }]}
+      style={[
+        {
+          flexDirection: isRTL ? "row-reverse" : "row",
+          marginVertical: 5,
+          zIndex: 99999,position:"relative"
+        },
+      ]}
     >
       <Button onPress={handleBack} style={styles.backButton}>
         <Arrow width={10} height={10} />

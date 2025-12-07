@@ -15,7 +15,6 @@ import { useGlobalLoader } from "./contexts/GlobalLoaderContext";
 import { RootStateType } from "./store";
 // Screens
 import { AnimatePresence } from "moti";
-import LoginScreen from "./views/LoginScreen/ui/LoginScreen";
 import OnBoardingScreen from "./views/OnBoardingScreen/OnBoardingScreen";
 import WelcomeScreen from "./views/welcomeScreen/welcomeScreen";
 
@@ -24,6 +23,7 @@ import BottomDrawer from "./components/BottomDrawer/ui/BottomDrawer";
 import { NavigationBottomTab } from "./components/feature/NavigationBottomTab/NavigationBottomTab";
 import { navigationRef } from "./navigation/navigationRef";
 import { openDrawer } from "./redux/drawerSlice";
+import WishlistScreen from "./views/WishlistScreen/WishlistScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -108,7 +108,10 @@ const AppInner = () => {
                     name="OnBoardingScreen"
                     component={OnBoardingScreen}
                   />
-                  <Stack.Screen name="LoginScreen" component={LoginScreen} />
+                  <Stack.Screen
+                    name="WishlistScreen"
+                    component={WishlistScreen}
+                  />
                 </Stack.Navigator>
               </AnimatePresence>
             </View>

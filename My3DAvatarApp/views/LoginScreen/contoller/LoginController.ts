@@ -1,13 +1,12 @@
 // src/screens/Login/LoginController.ts
 import { useMessage } from "@/contexts/MessageProvider";
 import { useAppDispatch } from "@/hooks/hooks";
-import { useBackHandler } from "@/hooks/useBackHandler";
 import { loginUser, loginWithGoogleFirebase } from "@/redux/actions/authActions";
 import { LoginFormValues, loginSchema } from "@/types/ValidationSchema";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { useFormik } from "formik";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { makeRedirectUri } from "expo-auth-session";
@@ -22,16 +21,6 @@ export const useLoginController = (navigation: any) => {
   const [visible, setVisible] = useState(true);
   const [isLoginInProgress, setIsLoginInProgress] = useState(false);
 
-  // 🔹 Handle physical back button
-  useBackHandler(() => {
-    triggerExit();
-    return true;
-  });
-
-  const triggerExit = useCallback(() => {
-    setVisible(false);
-    setTimeout(() => navigation.goBack(), 150);
-  }, [navigation]);
 
   // 🔹 Google Auth Session setup
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({

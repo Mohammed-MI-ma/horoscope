@@ -1,5 +1,8 @@
 // themeUtils.ts
 
+import { useColorModeValue } from "native-base"; // or Chakra UI
+import { DEFAULT_TEXT_COLOR, PRIMARY_COLOR, primaryShades } from "./theme";
+
 interface AnimatedColors {
   from: string;
   to: string;
@@ -22,3 +25,11 @@ export function getAnimatedColors(
     to: isArabic ? color2 : color1,
   };
 }
+// themeColors.ts
+
+export const useThemeColors = () => {
+  const bg = useColorModeValue(primaryShades[700], primaryShades[100]);
+  const textColor = useColorModeValue(DEFAULT_TEXT_COLOR, PRIMARY_COLOR);
+
+  return { bg, textColor };
+};

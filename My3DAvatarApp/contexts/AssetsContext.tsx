@@ -1,3 +1,5 @@
+// src/contexts/AssetsContext.tsx
+import { preloadImages } from "@/utils/loadAssets";
 import React, {
   createContext,
   ReactNode,
@@ -6,13 +8,12 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { preloadGlobalAssets } from "../config.dev";
-import { global_Assets } from "../images";
+import { ActivityIndicator, Text, View } from "react-native";
 
-type AssetsType = typeof global_Assets;
+export type AssetMap = Record<string, string>;
 
 interface AssetsContextValue {
-  loadedAssets: AssetsType | null;
+  loadedAssets: AssetMap | null;
   loading: boolean;
   error: Error | null;
 }
@@ -21,50 +22,78 @@ const AssetsContext = createContext<AssetsContextValue | null>(null);
 
 interface AssetsProviderProps {
   children: ReactNode;
+  assetsToLoad: AssetMap; // assets specific to this screen
+  fallback?: ReactNode; // optional fallback UI while loading
 }
 
-export const AssetsProvider = ({ children }: AssetsProviderProps) => {
-  const [loadedAssets, setLoadedAssets] = useState<AssetsType | null>(null);
+export const AssetsProvider = ({
+  children,
+  assetsToLoad,
+  fallback,
+}: AssetsProviderProps) => {
+  const [loadedAssets, setLoadedAssets] = useState<AssetMap | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function load() {
+    const load = async () => {
       try {
-        await preloadGlobalAssets(); // preloads images
-        if (isMounted) setLoadedAssets(global_Assets); // object matches type
+        console.log(assetsToLoad);
+        console.log("zabi",!assetsToLoad);
+        console.log("porno",Object.keys(assetsToLoad).length === 0);
+
+        if (!assetsToLoad || Object.keys(assetsToLoad).length === 0) {
+          throw new Error("Assets to load are undefined or empty");
+        }
+
+        await preloadImages(assetsToLoad);
+        if (isMounted) setLoadedAssets(assetsToLoad);
       } catch (err) {
-        console.error("Failed to preload global assets:", err);
+        console.error("❌ Asset preload failed:", err);
         if (isMounted) setError(err as Error);
       } finally {
         if (isMounted) setLoading(false);
       }
-    }
+    };
 
     load();
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [assetsToLoad]);
 
   const contextValue = useMemo(
     () => ({ loadedAssets, loading, error }),
     [loadedAssets, loading, error]
   );
 
-  if (loading) return null; // or <FancyLoader />
+  // Show fallback while loading, error message if failed
+  if (loading) {
+    return <>{fallback ?? <ActivityIndicator size="large" color="white" />}</>;
+  }
 
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "red", textAlign: "center" }}>
+          Failed to load assets: {error.message}
+        </Text>
+      </View>
+    );
+  }
+
+  // Everything loaded successfully
   return (
     <AssetsContext.Provider value={contextValue}>
-      {children}
+    {loading ? fallback || null : children}
     </AssetsContext.Provider>
   );
 };
 
-export const useAssets = () => {
+export const useAssets = (): AssetsContextValue => {
   const context = useContext(AssetsContext);
   if (!context) {
     throw new Error("useAssets must be used within an AssetsProvider");

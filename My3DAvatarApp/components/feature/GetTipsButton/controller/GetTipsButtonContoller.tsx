@@ -4,7 +4,7 @@ import React from "react";
 import GetTipsButtonUI from "../ui/GetTipsButtonUI";
 
 export const GetTipsButton = ({ onPress }: { onPress: () => void }) => {
-  const bg = useColorModeValue("primary.700", "primary.100");
+  const bg = useColorModeValue("primary.700", "white");
   const textColor = useColorModeValue("white", "black");
   const iconColor = textColor;
 

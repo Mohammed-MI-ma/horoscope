@@ -1,25 +1,33 @@
-import { useRTL } from "@/contexts/RTLContext";
-import type { TFunction } from "i18next";
-import React, { useTransition } from "react";
-import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
-
-import GlobalStatusBar from "@/components/atomic/GlobalStatusBar/GlobalStatusBar";
-import PopUpEarth from "@/components/atomic/PopUpEarth/PopUpEarth ";
-import BackgroundGradient from "@/components/feature/BackgroundGradient/BackgroundGradient";
-import { useAssets } from "@/contexts/AssetsContext";
-import { useAppFont } from "@/hooks/useAppFont";
-import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+// src/screens/WelcomeScreen.tsx
 import { MotiView } from "moti";
 import { Button } from "native-base";
+import React from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+//_Hooks
+
+import GlobalStatusBar from "@/components/atomic/GlobalStatusBar/GlobalStatusBar";
+import BackgroundGradient from "@/components/feature/BackgroundGradient/BackgroundGradient";
+import { AssetsProvider, useAssets } from "@/contexts/AssetsContext";
 
 import BackgroundDecorations from "@/components/atomic/BackgroundDecorations/BackgroundDecorations";
+
+//__Types
 import { Planet } from "@/types/Planet";
+
+//__Assets
+import SlideInEarth from "@/components/atomic/SlideInEarth/SlideInEarth";
+import { welcome_Assets } from "@/images";
+
 import MCIcon from "react-native-vector-icons/MaterialCommunityIcons";
+
+//__Styling
+import { useThemeColors } from "@/constants/themeUtils";
+import { useWelcomeScreenController } from "./WelcomeScreen.controller";
 import { styles } from "./welcomeScreen.styles";
+
 // Types
 interface WelcomeScreenProps {
   navigation: {
@@ -27,24 +35,19 @@ interface WelcomeScreenProps {
   };
 }
 
-export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
-  const { t }: { t: TFunction } = useTranslation();
-  const language = useSelector((state: any) => state.application.language);
-  const isArabic = language === "ar";
-  const { isRtl: isRTL } = useRTL();
-  const [isPending, startTransition] = useTransition();
-  const fontFamily = useAppFont();
-  const boldFont = useAppFont("bold");
+function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
+  const {
+    t,
+    isRtl,
+    fontFamily,
+    boldFont,
+    width: windowWidth,
+    handlePress,
+  } = useWelcomeScreenController(navigation);
+  const { textColor } = useThemeColors();
 
-  const { width: windowWidth } = useWindowDimensions();
-  // Handle navigation on press
-  const handlePress = () => {
-    startTransition(() => {
-      navigation.navigate("OnBoardingScreen"); // match exit duration
-    });
-  };
-  const { loadedAssets } = useAssets();
-  if (!loadedAssets) return null; // still loading
+  // Consume assets from AssetProvider
+  const { loadedAssets } = useAssets() as { loadedAssets: any };
 
   const planets: Planet[] = [
     {
@@ -55,7 +58,6 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
         position: "absolute",
         top: 0,
         left: 0,
-
         transform: [{ translateY: 40 }],
       },
     },
@@ -91,87 +93,99 @@ export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
       transition={{ duration: 350, type: "timing" }}
       style={{ flex: 1 }}
     >
-      <SafeAreaProvider>
-        <SafeAreaView style={styles.container}>
-          <GlobalStatusBar backgroundColor="black" />
-          <BackgroundGradient loadedAssets={loadedAssets} >
-            <View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              }}
-            >
-              <BackgroundDecorations planets={planets} />
-            </View>
-            <View
-              style={{
-                padding: 20,
-                flex: 1,
-                justifyContent: "flex-end",
-                alignItems: "center",
-                position: "relative",
-              }}
-            >
-              <View style={{ alignItems: "center" }}>
-                <Animated.Image
-                  source={{ uri: loadedAssets.logo }}
-                  style={[{ width: 75, height: 32 }]}
-                  resizeMode="contain"
-                />
+      <SafeAreaView style={styles.container}>
+        <GlobalStatusBar backgroundColor="black" />
+        <BackgroundGradient>
+          <BackgroundDecorations planets={planets} />
 
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 30,
-                    fontFamily: boldFont,
-                    textAlign: "center",
-                    width: "100%",
-                    maxWidth: 275,
-                  }}
-                >
-                  {t("welcomePage.title")}
-                </Text>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 12,
-                    fontFamily: fontFamily,
-                    textAlign: "center",
-                    width: "100%",
-                    maxWidth: 275,
-                  }}
-                >
-                  {t("welcomePage.subtitle")}
-                </Text>
-              </View>
-            </View>
-            <PopUpEarth uri={loadedAssets.earth} width={windowWidth} />
-            <Button
-              onPress={handlePress}
-              bg={"white"}
-              _text={{ color: "black" }}
+          <View style={styles.contentWrapper}>
+            <View
               style={{
-                borderRadius: 100,
+                alignItems: "center",
+              }}
+            >
+              <Animated.Image
+                source={{ uri: loadedAssets.logo }}
+                style={styles.logo}
+              />
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    color: textColor,
+                    fontFamily: boldFont,
+                  },
+                ]}
+              >
+                {t("welcomePage.title")}
+              </Text>
+              <Text
+                style={[
+                  styles.subtitle,
+                  {
+                    color: textColor,
+                    fontFamily: fontFamily,
+                  },
+                ]}
+              >
+                {t("welcomePage.subtitle")}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.CTAContainer}>
+            {/* Pulsing ring beneath button */}
+            <MotiView
+              from={{ scale: 0.5, opacity: 1 }}
+              animate={{ scale: 1.5, opacity: 0 }}
+              transition={{ loop: true, type: "timing", duration: 1000 }}
+              style={{
                 width: 70,
                 height: 70,
-                justifyContent: "center",
-                alignItems: "center",
-                position: "absolute",
-                bottom: 20,
-                left: 0,
-                transform: [{ translateX: -windowWidth / 2 + 35 }],
-                zIndex: 9999,
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.5)",
+                borderRadius: 100,
+                borderWidth: 2,
+                borderColor: "#ffffffff",
+                zIndex: 0, // <-- behind the button
               }}
+            />
+            {/* Actual button */}
+            <Button
+              onPress={handlePress}
+              bg="white"
+              style={[
+                styles.button,
+                {
+                  zIndex: 1, // <-- make sure it's above the ring
+                },
+              ]}
             >
-              <MCIcon name={"arrow-right"} size={25} color={"black"} />
+              <MCIcon name="arrow-right" size={25} color="black" />
             </Button>
-          </BackgroundGradient>
-        </SafeAreaView>
-      </SafeAreaProvider>
+          </View>
+
+          <SlideInEarth uri={loadedAssets.earth} width={windowWidth} />
+        </BackgroundGradient>
+      </SafeAreaView>
     </MotiView>
+  );
+}
+
+// Wrap the content in its own AssetsProvider
+export default function WelcomeScreen(props: WelcomeScreenProps) {
+  return (
+    <AssetsProvider
+      assetsToLoad={welcome_Assets ?? {}}
+      fallback={
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="#ffffff" />
+          <Text style={{ marginTop: 12, color: "white" }}>
+            Loading assets...
+          </Text>
+        </View>
+      }
+    >
+      <WelcomeScreenContent {...props} />
+    </AssetsProvider>
   );
 }

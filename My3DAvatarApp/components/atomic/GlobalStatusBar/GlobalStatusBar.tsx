@@ -1,3 +1,4 @@
+import { useThemeColors } from "@/constants/themeUtils";
 import { useColorMode } from "native-base";
 import React, { useEffect, useMemo } from "react";
 import { StatusBar, StatusBarStyle } from "react-native";
@@ -12,6 +13,7 @@ const GlobalStatusBar: React.FC<GlobalStatusBarProps> = ({
   backgroundColor,
 }) => {
   const { colorMode } = useColorMode();
+  const { bg, textColor } = useThemeColors();
 
   // Determine background color
   const finalBg = backgroundColor ?? (colorMode === "dark" ? "#000" : "#fff");
@@ -30,11 +32,13 @@ const GlobalStatusBar: React.FC<GlobalStatusBarProps> = ({
   }, [barStyle]);
 
   return (
-    <StatusBar
-      translucent={translucent}
-      backgroundColor={finalBg}
-      barStyle={barStyle}
-    />
+  <StatusBar
+          animated={true}
+          backgroundColor="#000000ff"
+          barStyle={"light-content"}
+          showHideTransition={"slide"}
+          hidden={false}
+        />
   );
 };
 

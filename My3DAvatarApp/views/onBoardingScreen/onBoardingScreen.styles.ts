@@ -4,7 +4,6 @@ import { StyleSheet, ViewStyle } from "react-native";
 interface Styles {
   layer: ViewStyle;
   container: ViewStyle;
-
 }
 
 export const styles: Styles = StyleSheet.create<Styles>({
@@ -18,8 +17,9 @@ export const styles: Styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
     position: "relative",
+
   },
-   card: {
+  card: {
     width: "48%", // fits 2 per row
     height: 120,
     backgroundColor: "#f2f2f2",

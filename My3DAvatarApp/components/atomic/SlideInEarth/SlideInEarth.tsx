@@ -34,7 +34,7 @@ export default function SlideInEarth({ uri, width }) {
   return (
     <Animated.Image
       source={{ uri }}
-      resizeMode="contain"
+      resizeMode="cover"
       style={{
         width,
         height: 200,

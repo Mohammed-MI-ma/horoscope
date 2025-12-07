@@ -1,13 +1,16 @@
-// src/providers/FontProvider.tsx
 import * as Font from "expo-font";
-import React, { createContext, useEffect, useState } from "react";
-import { Text } from "react-native";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
+import { ActivityIndicator, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { setFontsLoaded } from "../redux/applicationSlice";
 
 export const FontContext = createContext({ fontsLoaded: false });
 
-export const FontProvider = ({ children }: { children: React.ReactNode }) => {
+interface FontProviderProps {
+  children: ReactNode;
+}
+
+export const FontProvider = ({ children }: FontProviderProps) => {
   const [fontsLoaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
 
@@ -16,19 +19,27 @@ export const FontProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         await Font.loadAsync({
           "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
-          "Inter-Regular": require("../assets/fonts/Oswald-Regular.ttf"),
+          "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
           "alfont_com_DARK": require("../assets/fonts/alfont_com_DARK.ttf"),
         });
         setLoaded(true);
         dispatch(setFontsLoaded(true));
       } catch (err) {
         console.error("Error loading fonts:", err);
+        setLoaded(true); // fallback to system fonts
       }
     };
     loadFonts();
   }, [dispatch]);
 
-  if (!fontsLoaded) return <Text>Loading fonts...</Text>;
+  if (!fontsLoaded) {
+    // Better loading UI for production
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
 
   return (
     <FontContext.Provider value={{ fontsLoaded }}>
