@@ -1,3 +1,4 @@
+import { fontSizes } from "@/constants/theme";
 import { StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 // Define a type for your styles object
@@ -9,7 +10,11 @@ interface Styles {
   input: TextStyle;
   socialButton: ViewStyle;
   socialText: TextStyle;
-  socialContainer:ViewStyle;
+  socialContainer: ViewStyle;
+  button: ViewStyle;
+  buttonText: TextStyle;
+  recaptchaText: TextStyle;
+  error: TextStyle;
 }
 
 export const styles: Styles = StyleSheet.create<Styles>({
@@ -19,15 +24,16 @@ export const styles: Styles = StyleSheet.create<Styles>({
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     paddingHorizontal: 20,
-    paddingVertical: 30,
+    paddingVertical: 10,
+    backgroundColor: "white",
   },
   title: {
-    fontSize: 28,
+    fontSize: fontSizes["lg"],
   },
   subtitle: {
-    marginBottom: 40,
+    marginBottom: 10,
+    fontSize: fontSizes["sm"],
   },
   input: {
     height: 48,
@@ -38,37 +44,26 @@ export const styles: Styles = StyleSheet.create<Styles>({
     marginBottom: 8,
   },
   button: {
-    height: 48,
-    backgroundColor: "#007BFF",
-    borderRadius: 8,
+    height: 36,
+    backgroundColor: "#000000ff",
+    borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 12,
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  buttonText: { color: "#fff", fontSize: fontSizes["md"], fontWeight: "600" },
   socialContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 16,
   },
   socialButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 8,
+    height: 36,
+    borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 4,
   },
   socialText: { color: "#fff", fontWeight: "600" },
-  recaptchaButton: {
-    height: 48,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 8,
-  },
+
   recaptchaText: { color: "#333", fontWeight: "500" },
   error: { color: "red", fontSize: 12, marginBottom: 4 },
 });

@@ -5,10 +5,10 @@ import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ENV } from "@/config/env";
 
 //_Hooks
 
-import GlobalStatusBar from "@/components/atomic/GlobalStatusBar/GlobalStatusBar";
 import BackgroundGradient from "@/components/feature/BackgroundGradient/BackgroundGradient";
 import { AssetsProvider, useAssets } from "@/contexts/AssetsContext";
 
@@ -27,6 +27,8 @@ import MCIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useThemeColors } from "@/constants/themeUtils";
 import { useWelcomeScreenController } from "./WelcomeScreen.controller";
 import { styles } from "./welcomeScreen.styles";
+import LogoutButton from "@/components/feature/LogoutButton/LogoutButton";
+import { topOffset } from "@/utils/topOffset";
 
 // Types
 interface WelcomeScreenProps {
@@ -49,6 +51,7 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
   // Consume assets from AssetProvider
   const { loadedAssets } = useAssets() as { loadedAssets: any };
 
+  console.log("*****************************************porno:", ENV.API_URL);
   const planets: Planet[] = [
     {
       uri: loadedAssets.planet1,
@@ -56,7 +59,7 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
         width: 200,
         height: 200,
         position: "absolute",
-        top: 0,
+        top: topOffset(40),
         left: 0,
         transform: [{ translateY: 40 }],
       },
@@ -67,7 +70,7 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
         width: 75,
         height: 75,
         position: "absolute",
-        top: 0,
+        top: topOffset(40),
         left: 0,
         transform: [{ translateY: -30 }],
       },
@@ -78,7 +81,7 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
         width: 75,
         height: 75,
         position: "absolute",
-        top: 0,
+        top: topOffset(40),
         right: 0,
         transform: [{ translateY: 100 }],
       },
@@ -94,7 +97,6 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
       style={{ flex: 1 }}
     >
       <SafeAreaView style={styles.container}>
-        <GlobalStatusBar backgroundColor="black" />
         <BackgroundGradient>
           <BackgroundDecorations planets={planets} />
 
@@ -132,6 +134,10 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
               </Text>
             </View>
           </View>
+          {/* Pulsing ring beneath button 
+            <LogoutButton />
+            */}
+
           <View style={styles.CTAContainer}>
             {/* Pulsing ring beneath button */}
             <MotiView

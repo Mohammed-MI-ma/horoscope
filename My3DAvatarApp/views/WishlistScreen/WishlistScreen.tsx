@@ -1,4 +1,3 @@
-import GlobalStatusBar from "@/components/atomic/GlobalStatusBar/GlobalStatusBar";
 import { ScreenWrapper } from "@/components/atomic/ScreenWrapper/ScreenWrapper";
 import { ExitWrapper } from "@/components/ExitWrapper/ExitWrapper";
 import BackgroundGradient from "@/components/feature/BackgroundGradient/BackgroundGradient";
@@ -34,7 +33,6 @@ function WishlistScreenContent({ navigation }: WishlistScreenProps) {
   return (
     <ScreenWrapper>
       <SafeAreaView style={styles.container}>
-        <GlobalStatusBar backgroundColor="black" />
 
         <ExitWrapper visible={visible} type="fade">
           <MotiView

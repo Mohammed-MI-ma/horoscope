@@ -48,8 +48,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "96cf7ff1-e8de-46fa-8a34-77bdb9da4fd6"
-      }
+        "projectId": "25b60143-817e-4b1c-951d-9aedc28c6742"
+      },
+      "APP_ENV": "development",
+      "GOOGLE_CLIENT_ID": "489966643652-your-web-client-id.apps.googleusercontent.com",
+      "GOOGLE_ANDROID_CLIENT_ID": "489966643652-your-android-client-id.apps.googleusercontent.com",
+      "RECAPTCHA_SITE_KEY": "6Ld6jycsAAAAAGQdi3e98HBnVho-GvHJ6KJLAN5V",
+      "RECAPTCHA_SECRET": "6Ld6jycsAAAAACPAFQDdvLueontZCXalgInPkvIL",
+      "API_URL": "https://dev-api.myapp.com",
+      "APP_SCHEME": "my3davatarapp-dev"
     }
   }
 }

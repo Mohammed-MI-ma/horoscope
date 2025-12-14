@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useTransition } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef, useState, useTransition } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import Toast from 'react-native-toast-message';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -19,11 +20,13 @@ import OnBoardingScreen from "./views/OnBoardingScreen/OnBoardingScreen";
 import WelcomeScreen from "./views/welcomeScreen/welcomeScreen";
 
 // Bottom Tab
-import BottomDrawer from "./components/BottomDrawer/ui/BottomDrawer";
+import BottomDrawer from "./components/BottomDrawer/BottomDrawer";
 import { NavigationBottomTab } from "./components/feature/NavigationBottomTab/NavigationBottomTab";
 import { navigationRef } from "./navigation/navigationRef";
 import { openDrawer } from "./redux/drawerSlice";
 import WishlistScreen from "./views/WishlistScreen/WishlistScreen";
+import { useAuth } from "./contexts/AuthContext";
+import LoginScreen from "./views/LoginScreen/ui/LoginScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,13 +35,15 @@ const AppInner = () => {
   const [ready, setReady] = useState(false);
 
   const [isPending, startTransition] = useTransition();
-  const [currentRoute, setCurrentRoute] = React.useState<string>("");
 
   const isDarkMode = useSelector(
     (state: RootStateType) => state.application.isDarkMode
   );
   const { colorMode, toggleColorMode } = useColorMode();
-  const isLoggedIn = false;
+  const { user, initializing } = useAuth();
+  const isLoggedIn = !!user;
+  const currentRouteRef = useRef<string>("");
+  const [currentRoute, setCurrentRoute] = useState<string>("");
   const dispatch = useDispatch();
   // Sync Redux → NativeBase
   useEffect(() => {
@@ -58,21 +63,9 @@ const AppInner = () => {
     });
   }, []);
 
-  const handleTabPress = (tabName: string) => {
-    if (isLoggedIn) {
-    } else {
-      // Open drawer
-      console.log("porno");
-      dispatch(
-        openDrawer({
-          title: "Category Details",
-          placement: "bottom",
-          contentType: "category-details",
-          activeCategory: { id: "item.id", partner: "item.partner" },
-        })
-      );
-    }
-  };
+
+  if (initializing) return <Text>Restoring session...</Text>;
+
   if (!ready) return <Text>Switching screens...</Text>;
 
   return (
@@ -80,16 +73,18 @@ const AppInner = () => {
       <NavigationContainer
         ref={navigationRef}
         onReady={() => {
-          console.log("Navigation is ready");
-
-          setCurrentRoute(navigationRef.getCurrentRoute()?.name || "");
+          const name = navigationRef.getCurrentRoute()?.name || "";
+          currentRouteRef.current = name; // fast access
+          setCurrentRoute(name); // triggers re-render for UI
         }}
-        onStateChange={() =>
-          setCurrentRoute(navigationRef.getCurrentRoute()?.name || "")
-        }
+        onStateChange={() => {
+          const name = navigationRef.getCurrentRoute()?.name || "";
+          currentRouteRef.current = name;
+          setCurrentRoute(name);
+        }}
       >
         {isPending ? (
-          <Text>Switching screens...</Text>
+          <ActivityIndicator size="large" />
         ) : (
           <View style={styles.container}>
             {/* Stack takes all space above tab */}
@@ -112,6 +107,10 @@ const AppInner = () => {
                     name="WishlistScreen"
                     component={WishlistScreen}
                   />
+                     <Stack.Screen
+                    name="LoginScreen"
+                    component={LoginScreen}
+                  />
                 </Stack.Navigator>
               </AnimatePresence>
             </View>
@@ -124,7 +123,10 @@ const AppInner = () => {
                     name: "Home",
                     Icon: Solar,
                     label: "اليوم",
-                    onPress: () => handleTabPress("OnBoardingScreen"),
+                    onPress: () =>
+                      /*handleTabPress("OnBoardingScreen")*/ console.log(
+                        "Go Home"
+                      ),
                   },
                   {
                     name: "Profile",
@@ -134,21 +136,21 @@ const AppInner = () => {
                     onPress: () => console.log("Go Profile"),
                   },
                   {
-                    name: "Home",
+                    name: "vvvvv",
                     label: "الدردشة",
                     Icon: Chat,
 
                     onPress: () => console.log("Go Home"),
                   },
                   {
-                    name: "Profile",
+                    name: "azeaze",
                     label: "التاروت",
                     Icon: Tarrot,
 
                     onPress: () => console.log("Go Profile"),
                   },
                   {
-                    name: "Home",
+                    name: "zereghbdv",
                     label: "التعليم",
                     Icon: Education,
 
@@ -160,7 +162,9 @@ const AppInner = () => {
           </View>
         )}
       </NavigationContainer>
-      <BottomDrawer currentRouteName={currentRoute} />
+      <BottomDrawer currentRouteName={currentRoute} isLoggedIn={isLoggedIn} />
+            <Toast />
+
     </>
   );
 };

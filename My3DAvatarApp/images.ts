@@ -42,9 +42,9 @@ export const bottomDrawer_Assets: AssetMap = {
 export const welcome_Assets: AssetMap = {
   mars: asset("mars.webp"),
   earth: asset("earth.webp"),
-
   planet1: asset("planet2.png"),
   logo: asset("LOGOO.png"),
+  logoD: asset("LOGO_D.png"),
   stars: asset("stars.webp"),
 };
 

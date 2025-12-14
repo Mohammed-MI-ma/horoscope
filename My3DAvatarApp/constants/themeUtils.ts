@@ -28,7 +28,7 @@ export function getAnimatedColors(
 // themeColors.ts
 
 export const useThemeColors = () => {
-  const bg = useColorModeValue(primaryShades[700], primaryShades[100]);
+  const bg = useColorModeValue(primaryShades[100],primaryShades[700] );
   const textColor = useColorModeValue(DEFAULT_TEXT_COLOR, PRIMARY_COLOR);
 
   return { bg, textColor };

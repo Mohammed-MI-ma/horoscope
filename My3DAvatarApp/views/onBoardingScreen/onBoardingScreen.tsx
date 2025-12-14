@@ -1,12 +1,11 @@
 import { useRTL } from "@/contexts/RTLContext";
 import type { TFunction } from "i18next";
-import React, { useState, useTransition } from "react";
+import React, { useCallback, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 
-import GlobalStatusBar from "@/components/atomic/GlobalStatusBar/GlobalStatusBar";
 import BackgroundGradient from "@/components/feature/BackgroundGradient/BackgroundGradient";
 import { useAppFont } from "@/hooks/useAppFont";
 import { MotiView } from "moti";
@@ -22,7 +21,6 @@ import { AssetsProvider, useAssets } from "@/contexts/AssetsContext";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { welcome_Assets } from "@/images";
 
-
 // Types
 interface OnBoardingScreenProps {
   navigation: {
@@ -30,9 +28,7 @@ interface OnBoardingScreenProps {
   };
 }
 
-function OnBoardingScreenContent({
-  navigation,
-}: OnBoardingScreenProps) {
+function OnBoardingScreenContent({ navigation }: OnBoardingScreenProps) {
   const { t }: { t: TFunction } = useTranslation();
   const language = useSelector((state: any) => state.application.language);
   const isArabic = language === "ar";
@@ -43,10 +39,15 @@ function OnBoardingScreenContent({
   const [visible, setVisible] = useState(true);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const { textColor } = useThemeColors();
+  const [refreshing, setRefreshing] = useState(false);
 
   // Consume assets from AssetProvider
   const { loadedAssets } = useAssets() as { loadedAssets: any };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
 
+    setTimeout(() => setRefreshing(false), 800); // short delay for UX
+  }, []);
   const handlePress = () => {
     navigation.navigate("WishlistScreen");
   };
@@ -58,29 +59,69 @@ function OnBoardingScreenContent({
       transition={{ duration: 350, type: "timing" }}
       style={{ flex: 1 }}
     >
-        <SafeAreaView style={styles.container}>
-          <GlobalStatusBar backgroundColor="black" />
-          <BackgroundGradient>
-            <Image
-              source={{ uri: loadedAssets.planet1 }}
-              resizeMode="contain"
-              style={{
-                width: 200,
-                height: 200,
-                position: "absolute",
-                top: windowHeight / 2,
-                left: -100,
-                transform: [{ translateY: 40 }],
-              }}
-            />
+      <SafeAreaView style={styles.container}>
+        <BackgroundGradient>
+          <Image
+            source={{ uri: loadedAssets.planet1 }}
+            resizeMode="contain"
+            style={{
+              width: 200,
+              height: 200,
+              position: "absolute",
+              top: windowHeight / 2,
+              left: -100,
+              transform: [{ translateY: 40 }],
+            }}
+          />
 
-            <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexDirection: "row",
+                marginBottom: 50,
+              }}
+            >
+              <Image
+                source={{ uri: loadedAssets.logo }}
+                style={[{ width: 50, height: 20 }]}
+                resizeMode="contain"
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <GetTipsButton
+                  onPress={() => {
+                    console.log("first");
+                  }}
+                />
+                <DarkModeToggle />
+              </View>
+            </View>
+            <View style={{ marginTop: 20, marginBottom: 20 }}>
+              <Text
+                style={{
+                  color: textColor,
+                  fontSize: 30,
+                  fontFamily: boldFont,
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                {t("whatWouldYouLike")}
+              </Text>
               <View
                 style={{
                   alignItems: "center",
                   justifyContent: "space-between",
                   flexDirection: "row",
-                  marginBottom: 50,
                 }}
               >
                 <Image
@@ -88,75 +129,34 @@ function OnBoardingScreenContent({
                   style={[{ width: 50, height: 20 }]}
                   resizeMode="contain"
                 />
+
                 <View
                   style={{
                     flexDirection: "row",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    gap: 10,
                   }}
                 >
-                  <GetTipsButton
-                    onPress={() => {
-                      console.log("first");
-                    }}
-                  />
-                  <DarkModeToggle />
+                  <PressableMoti onPress={handlePress}>
+                    <Text
+                      style={{
+                        fontFamily: boldFont,
+                        color: textColor,
+                        fontSize: 12,
+                        textDecorationLine: "underline",
+                      }}
+                    >
+                      {t("see_more")}
+                    </Text>
+                  </PressableMoti>
                 </View>
               </View>
-              <View style={{ marginTop: 20, marginBottom: 20 }}>
-                <Text
-                  style={{
-                    color: textColor,
-                    fontSize: 30,
-                    fontFamily: boldFont,
-                    textAlign: "center",
-                    width: "100%",
-                  }}
-                >
-                  {t("whatWouldYouLike")}
-                </Text>
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                  }}
-                >
-                  <Image
-                    source={{ uri: loadedAssets.logo }}
-                    style={[{ width: 50, height: 20 }]}
-                    resizeMode="contain"
-                  />
-
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <PressableMoti onPress={handlePress}>
-                      <Text
-                        style={{
-                          fontFamily: boldFont,
-                          color: textColor,
-                          fontSize: 12,
-                          textDecorationLine: "underline",
-                        }}
-                      >
-                        {t("see_more")}
-                      </Text>
-                    </PressableMoti>
-                  </View>
-                </View>
-              </View>
-              <CardGrid />
             </View>
-          </BackgroundGradient>
-        </SafeAreaView>
+            <CardGrid />
+          </View>
+        </BackgroundGradient>
+      </SafeAreaView>
     </MotiView>
   );
 }

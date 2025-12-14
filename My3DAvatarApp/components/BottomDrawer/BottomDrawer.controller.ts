@@ -1,17 +1,15 @@
-
-
 // BottomDrawer.controller.ts
 import { useAssets } from "@/contexts/AssetsContext";
-import { closeDrawer } from "@/redux/drawerSlice";
+import { closeDrawer, openDrawer } from "@/redux/drawerSlice";
 import { RootStateType } from "@/store";
 import { BottomDrawerControllerResult } from "@/types/BottomDrawer.types";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-console.log("🔥 BottomDrawer.controller.ts LOADED");
 
 export function useBottomDrawerController(
-  currentRouteName?: string
+  currentRouteName?: string,
+  isLoggedIn?: boolean
 ): BottomDrawerControllerResult {
   const dispatch = useDispatch();
   const { open } = useSelector((state: RootStateType) => state.drawer);
@@ -20,24 +18,30 @@ export function useBottomDrawerController(
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "80%"], []);
 
-  const PROTECTED_ROUTES = ["LoginScreen", "WelcomeScreen"];
+  // List of routes that require authentication
+  const PROTECTED_ROUTES = ["OnBoardingScreen", "WishlistScreen"];
 
+  // Open/close drawer based on Redux state (optional)
   useEffect(() => {
-    console.log(open)
     const sheet = bottomSheetRef.current;
     if (!sheet) return;
 
     open ? sheet.expand() : sheet.close();
   }, [open]);
 
-  // Auto-close when route changes
+  // Auto-open drawer for protected routes if not logged in
   useEffect(() => {
-    if (!currentRouteName) return;
+    const sheet = bottomSheetRef.current;
+    if (!sheet || !currentRouteName) return;
 
-    if (PROTECTED_ROUTES.includes(currentRouteName)) {
+    if (!isLoggedIn && PROTECTED_ROUTES.includes(currentRouteName)) {
+      sheet.expand(); // automatically open drawer
+      dispatch(openDrawer()); // optional: keep Redux in sync
+    } else {
+      sheet.close(); // auto-close if route changes or user logs in
       dispatch(closeDrawer());
     }
-  }, [currentRouteName]);
+  }, [currentRouteName, isLoggedIn]);
 
   const handleSheetChange = (index: number) => {
     if (index === -1) dispatch(closeDrawer());

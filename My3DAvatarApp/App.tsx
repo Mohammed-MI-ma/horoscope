@@ -1,4 +1,5 @@
 // __REACT_IMPORTS
+
 import { JSX, Suspense } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
@@ -6,6 +7,7 @@ import "react-native-reanimated";
 // __NB_IMPORTS
 import { ColorMode, NativeBaseProvider, StorageManager } from "native-base";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
 // i18n setup
 import { I18nextProvider } from "react-i18next";
 import { enableScreens } from "react-native-screens";
@@ -18,7 +20,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import i18n from "./utils/initializeI18n";
 
-//__STORE
+// __STORE__
 import AppInner from "./AppInner";
 import GlobalLoader from "./components/atomic/GlobalLoader/GlobalLoader";
 import customTheme from "./constants/theme";
@@ -28,7 +30,11 @@ import { MessageProvider } from "./contexts/MessageProvider";
 import { RTLProvider } from "./contexts/RTLContext";
 import { setDarkMode } from "./redux/applicationSlice";
 import { RootStateType, persistor, store } from "./store";
+import { Text } from "react-native";
+import { AuthProvider } from "./contexts/AuthContext";
+import GlobalStatusBar from "./components/atomic/GlobalStatusBar/GlobalStatusBar";
 
+// Enable native screens for better performance
 enableScreens();
 
 // ⚙️ NativeBase color mode manager linked to Redux Persist
@@ -47,18 +53,21 @@ export default function App(): JSX.Element {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
-          <PersistGate loading={"loading"} persistor={persistor}>
+          <PersistGate loading={<Text>qsdqsd</Text>} persistor={persistor}>
             <NativeBaseProvider
               theme={customTheme}
               colorModeManager={colorModeManager}
             >
+              <GlobalStatusBar /> {/* global, top-level */}
               <I18nextProvider i18n={i18n}>
                 <Host>
                   <GlobalLoaderProvider>
                     <FontProvider>
                       <I18nProvider>
                         <RTLProvider>
-                            <MessageProvider>
+                          <MessageProvider>
+                            {/* 🔐 AUTH GOES HERE */}
+                            <AuthProvider>
                               <Suspense
                                 fallback={
                                   <GlobalLoader message="Loading assets..." />
@@ -66,7 +75,8 @@ export default function App(): JSX.Element {
                               >
                                 <AppInner />
                               </Suspense>
-                            </MessageProvider>
+                            </AuthProvider>
+                          </MessageProvider>
                         </RTLProvider>
                       </I18nProvider>
                     </FontProvider>

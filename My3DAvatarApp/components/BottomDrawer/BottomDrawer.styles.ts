@@ -14,7 +14,9 @@ export const bottomDrawerStyles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: 48,
+    borderWidth: 1,
+    borderColor: "#ffffffff",
   },
 
   logo: {

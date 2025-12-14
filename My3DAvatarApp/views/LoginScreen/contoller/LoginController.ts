@@ -1,53 +1,41 @@
-// src/screens/Login/LoginController.ts
 import { useMessage } from "@/contexts/MessageProvider";
 import { useAppDispatch } from "@/hooks/hooks";
-import { loginUser, loginWithGoogleFirebase } from "@/redux/actions/authActions";
+import {
+  loginUser,
+  loginWithGoogleFirebase,
+} from "@/redux/actions/authActions";
 import { LoginFormValues, loginSchema } from "@/types/ValidationSchema";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { makeRedirectUri } from "expo-auth-session";
-
-WebBrowser.maybeCompleteAuthSession(); // Necessary for Expo Auth Session
+import { useGoogleAuth } from "@/config/useGoogleAuth";
 
 export const useLoginController = (navigation: any) => {
   const dispatch = useAppDispatch();
   const message = useMessage();
   const { t } = useTranslation();
 
-  const [visible, setVisible] = useState(true);
   const [isLoginInProgress, setIsLoginInProgress] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState("");
 
+  // Google login hook
+  const { request, response, promptAsync } = useGoogleAuth();
 
-  // 🔹 Google Auth Session setup
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: "489966643652-ul62rfi8ebgjsoat46mp07472h12j2qj.apps.googleusercontent.com", // Replace with your actual client ID
-    redirectUri:makeRedirectUri({ useProxy: true }),
+  // Automatically handle Google login
+  useEffect(() => {
+    if (response?.type === "success") {
+      const id_token = response.params.id_token;
+      handleGoogleLoginCallback(id_token);
+    }
+  }, [response]);
 
-  });
-
-  // Automatically handle Google login result
-  const handleGoogleLogin = async () => {
+  const handleGoogleLoginCallback = async (idToken: string) => {
+    setIsLoginInProgress(true);
     try {
-      setIsLoginInProgress(true);
-      const result = await promptAsync();
-
-      if (result.type !== "success") {
-        message.warning(t("auth.loginFailed"));
-        return;
-      }
-
-      const { id_token } = result.params;
-      // Dispatch the Redux action to log in with Google
-      const res = await dispatch(loginWithGoogleFirebase(id_token));
-      if (res.status) {
-        message.success(t("auth.loginSuccess"));
-      } else {
-        message.warning(res.message);
-      }
+      const res = await dispatch(loginWithGoogleFirebase(idToken));
+      if (res.status) message.success(t("auth.loginSuccess"));
+      else message.warning(res.message || t("auth.loginFailed"));
     } catch (err: any) {
       console.error("Google login error:", err);
       message.error(err?.message || t("auth.loginFailed"));
@@ -56,34 +44,43 @@ export const useLoginController = (navigation: any) => {
     }
   };
 
-  // ✅ Formik setup for email/password login
+  const handleGoogleLogin = async () => {
+    setIsLoginInProgress(true);
+    await promptAsync();
+  };
+
+  // Formik for email/password login
   const formik = useFormik<LoginFormValues>({
     initialValues: {
       loginMethod: "email",
       email: "",
       password: "",
-      recaptchaToken: "",
+      recaptchaToken: "", // <-- required for type safety
     },
     validationSchema: loginSchema(t),
     onSubmit: async (values) => {
+      if (!recaptchaToken) {
+        message.warning(t("auth.recaptchaRequired"));
+        return;
+      }
+
       setIsLoginInProgress(true);
       try {
-        if (!values.recaptchaToken) {
-          message.warning(t("auth.recaptchaRequired"));
-          return;
-        }
+        console.log(values, "Submitting login with recaptchaToken:", recaptchaToken);
+        const res = await dispatch(
+          loginUser({
+            ...values,
+            recaptchaToken, // send the token only here
+          })
+        );
 
-        const response = await dispatch(loginUser(values));
-
-        if (response.status) {
-          message.success(t("auth.loginSuccess"));
-        } else {
-          message.warning(response.message || t("auth.loginFailed"));
-        }
+        if (res.status) message.success(t("auth.loginSuccess"));
+        else message.warning(res.message || t("auth.loginFailed"));
       } catch (err: any) {
-        console.error("LoginController error:", err);
+        console.error("Login error:", err);
         message.error(err?.message || t("auth.loginFailed"));
       } finally {
+        setRecaptchaToken(""); // clear token after submit
         setIsLoginInProgress(false);
       }
     },
@@ -95,11 +92,10 @@ export const useLoginController = (navigation: any) => {
 
   return {
     formik,
-    visible,
     isLoginInProgress,
-    triggerExit,
     setLoginMethod,
     handleGoogleLogin,
-    request, // for disabling Google button until ready
+    recaptchaToken,
+    setRecaptchaToken,
   };
 };
