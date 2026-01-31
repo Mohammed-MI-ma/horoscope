@@ -1,4 +1,5 @@
 // BottomDrawer.styles.ts
+import { fontSizes, primaryShades } from "@/constants/theme";
 import { Dimensions, StyleSheet } from "react-native";
 const WINDOW_WIDTH = Dimensions.get("window").width;
 
@@ -7,7 +8,7 @@ export const bottomDrawerStyles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 50,
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: { width: 0, height: -2 },elevation:6
   },
 
   content: {
@@ -18,13 +19,6 @@ export const bottomDrawerStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ffffffff",
   },
-
-  logo: {
-    width: 100,
-    height: 100,
-    marginBottom: 30,
-  },
-
   actionContainer: {
     width: "100%",
     alignItems: "center",
@@ -34,12 +28,10 @@ export const bottomDrawerStyles = StyleSheet.create({
   // Buttons
   primaryButton: {
     width: WINDOW_WIDTH - 50,
-    height: 100,
-    borderRadius: 25,
-    backgroundColor: "#04172E",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 20,
+    borderRadius: 5,
+    backgroundColor: primaryShades[500],
+    paddingHorizontal: 30,
+
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -47,14 +39,11 @@ export const bottomDrawerStyles = StyleSheet.create({
 
   primaryButtonTitle: {
     color: "white",
-    fontSize: 25,
-    fontFamily: "Bold",
+    fontSize: fontSizes["2xl"],
   },
-
   primaryButtonSubtitle: {
     color: "white",
-    fontSize: 10,
-    fontFamily: "Regular",
+    fontSize: fontSizes["xs"],
   },
 
   secondaryButton: {

@@ -8,6 +8,7 @@ type Extra = {
   RECAPTCHA_SITE_KEY?: string;
   RECAPTCHA_SECRET?: string;
   API_URL?: string;
+  API_CELEBRITIES_URL?:string;
   APP_SCHEME?: string;
   [k: string]: any;
 };
@@ -21,6 +22,7 @@ export const ENV = {
   RECAPTCHA_SITE_KEY: extra.RECAPTCHA_SITE_KEY ?? "",
   RECAPTCHA_SECRET: extra.RECAPTCHA_SECRET ?? "",
   API_URL: extra.API_URL ?? "",
+  API_CELEBRITIES_URL: extra.API_CELEBRITIES_URL ?? "",
   APP_SCHEME: extra.APP_SCHEME ?? "",
   IS_DEV: (extra.APP_ENV ?? "development") === "development"
 } as const;

@@ -1,7 +1,7 @@
 // src/screens/WelcomeScreen.tsx
 import { MotiView } from "moti";
 import { Button } from "native-base";
-import React from "react";
+import React, { Suspense } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,13 +12,10 @@ import { ENV } from "@/config/env";
 import BackgroundGradient from "@/components/feature/BackgroundGradient/BackgroundGradient";
 import { AssetsProvider, useAssets } from "@/contexts/AssetsContext";
 
-import BackgroundDecorations from "@/components/atomic/BackgroundDecorations/BackgroundDecorations";
-
 //__Types
 import { Planet } from "@/types/Planet";
 
 //__Assets
-import SlideInEarth from "@/components/atomic/SlideInEarth/SlideInEarth";
 import { welcome_Assets } from "@/images";
 
 import MCIcon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -27,8 +24,16 @@ import MCIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useThemeColors } from "@/constants/themeUtils";
 import { useWelcomeScreenController } from "./WelcomeScreen.controller";
 import { styles } from "./welcomeScreen.styles";
-import LogoutButton from "@/components/feature/LogoutButton/LogoutButton";
 import { topOffset } from "@/utils/topOffset";
+import CTAButton from "@/components/atomic/CTAButton/CTAButton";
+// Lazy-loaded non-critical components
+const BackgroundDecorations = React.lazy(
+  () =>
+    import("@/components/atomic/BackgroundDecorations/BackgroundDecorations")
+);
+const SlideInEarth = React.lazy(
+  () => import("@/components/atomic/SlideInEarth/SlideInEarth")
+);
 
 // Types
 interface WelcomeScreenProps {
@@ -50,20 +55,8 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
 
   // Consume assets from AssetProvider
   const { loadedAssets } = useAssets() as { loadedAssets: any };
-
-  console.log("*****************************************porno:", ENV.API_URL);
   const planets: Planet[] = [
-    {
-      uri: loadedAssets.planet1,
-      style: {
-        width: 200,
-        height: 200,
-        position: "absolute",
-        top: topOffset(40),
-        left: 0,
-        transform: [{ translateY: 40 }],
-      },
-    },
+  
     {
       uri: loadedAssets.planet1,
       style: {
@@ -85,6 +78,16 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
         right: 0,
         transform: [{ translateY: 100 }],
       },
+    },  {
+      uri: loadedAssets.planet1,
+      style: {
+        width: 200,
+        height: 200,
+        position: "absolute",
+        top: topOffset(40),
+        left: 0,
+        transform: [{ translateY: 40 }],
+      },
     },
   ];
 
@@ -96,10 +99,7 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
       transition={{ duration: 350, type: "timing" }}
       style={{ flex: 1 }}
     >
-      <SafeAreaView style={styles.container}>
         <BackgroundGradient>
-          <BackgroundDecorations planets={planets} />
-
           <View style={styles.contentWrapper}>
             <View
               style={{
@@ -134,43 +134,21 @@ function WelcomeScreenContent({ navigation }: WelcomeScreenProps) {
               </Text>
             </View>
           </View>
-          {/* Pulsing ring beneath button 
-            <LogoutButton />
-            */}
 
-          <View style={styles.CTAContainer}>
-            {/* Pulsing ring beneath button */}
-            <MotiView
-              from={{ scale: 0.5, opacity: 1 }}
-              animate={{ scale: 1.5, opacity: 0 }}
-              transition={{ loop: true, type: "timing", duration: 1000 }}
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: 100,
-                borderWidth: 2,
-                borderColor: "#ffffffff",
-                zIndex: 0, // <-- behind the button
-              }}
-            />
-            {/* Actual button */}
-            <Button
-              onPress={handlePress}
-              bg="white"
-              style={[
-                styles.button,
-                {
-                  zIndex: 1, // <-- make sure it's above the ring
-                },
-              ]}
-            >
-              <MCIcon name="arrow-right" size={25} color="black" />
-            </Button>
-          </View>
+          {/**main content  */}
+          <CTAButton handlePress={handlePress} />
+          {/**not important  content  */}
 
-          <SlideInEarth uri={loadedAssets.earth} width={windowWidth} />
+          {/* Lazy-loaded non-critical content */}
+          <Suspense
+            fallback={
+              <View style={{ flex: 1 }} /> // invisible placeholder
+            }
+          >
+            <BackgroundDecorations planets={planets} />
+            <SlideInEarth uri={loadedAssets.earth} width={windowWidth} />
+          </Suspense>
         </BackgroundGradient>
-      </SafeAreaView>
     </MotiView>
   );
 }
@@ -185,9 +163,7 @@ export default function WelcomeScreen(props: WelcomeScreenProps) {
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text style={{ marginTop: 12, color: "white" }}>
-            Loading assets...
-          </Text>
+          <Text style={{ marginTop: 12, color: "white" }}></Text>
         </View>
       }
     >

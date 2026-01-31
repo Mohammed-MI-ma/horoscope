@@ -63,7 +63,7 @@ const options: InitOptions = {
   saveMissing: true,
   missingKeyHandler: (lng, ns, key) => {
     if (__DEV__) {
-      //console.warn(`[i18n] Missing translation key: "${key}" for "${lng}"`);
+      console.warn(`[i18n] Missing translation key: "${key}" for "${lng}"`);
     }
   },
 };

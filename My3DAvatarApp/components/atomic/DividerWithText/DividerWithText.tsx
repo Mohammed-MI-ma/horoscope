@@ -1,3 +1,4 @@
+import { useAppFont } from "@/hooks/useAppFont";
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
@@ -16,10 +17,12 @@ const DividerWithText: React.FC<DividerWithTextProps> = ({
   marginVertical = 7,
   textStyle = {},
 }) => {
+  const boldFont  = useAppFont("bold");
+
   return (
     <View style={[styles.container, { marginVertical }]}>
       <View style={[styles.line, { backgroundColor: color, height: thickness }]} />
-      {text ? <Text style={[styles.text, textStyle]}>{text}</Text> : null}
+      {text ? <Text style={[styles.text, textStyle, { fontFamily: boldFont }]}>{text}</Text> : null}
       <View style={[styles.line, { backgroundColor: color, height: thickness }]} />
     </View>
   );

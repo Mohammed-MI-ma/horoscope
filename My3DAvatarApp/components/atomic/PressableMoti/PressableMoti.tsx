@@ -6,6 +6,7 @@ interface PressableMotiProps {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   onPress?: () => void;
+  disabled?: boolean; // ✅ ADD THIS
   scale?: number; // optional scale factor
 }
 
@@ -13,6 +14,8 @@ const PressableMoti: React.FC<PressableMotiProps> = ({
   children,
   style = {},
   onPress = () => {},
+  disabled,
+
   scale = 0.95,
 }) => {
   const [pressed, setPressed] = useState(false);
@@ -22,6 +25,7 @@ const PressableMoti: React.FC<PressableMotiProps> = ({
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
       onPress={onPress}
+      disabled={disabled} // ✅ forward it
     >
       <MotiView
         style={[styles.container, style]}

@@ -33,6 +33,7 @@ import { RootStateType, persistor, store } from "./store";
 import { Text } from "react-native";
 import { AuthProvider } from "./contexts/AuthContext";
 import GlobalStatusBar from "./components/atomic/GlobalStatusBar/GlobalStatusBar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Enable native screens for better performance
 enableScreens();
@@ -47,44 +48,56 @@ const colorModeManager: StorageManager = {
     store.dispatch(setDarkMode(value === "dark"));
   },
 };
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false, // important for React Native
+    },
+  },
+});
 
 export default function App(): JSX.Element {
   return (
+    
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
-          <PersistGate loading={<Text>qsdqsd</Text>} persistor={persistor}>
-            <NativeBaseProvider
-              theme={customTheme}
-              colorModeManager={colorModeManager}
-            >
-              <GlobalStatusBar /> {/* global, top-level */}
-              <I18nextProvider i18n={i18n}>
-                <Host>
-                  <GlobalLoaderProvider>
-                    <FontProvider>
-                      <I18nProvider>
-                        <RTLProvider>
-                          <MessageProvider>
-                            {/* 🔐 AUTH GOES HERE */}
-                            <AuthProvider>
-                              <Suspense
-                                fallback={
-                                  <GlobalLoader message="Loading assets..." />
-                                }
-                              >
-                                <AppInner />
-                              </Suspense>
-                            </AuthProvider>
-                          </MessageProvider>
-                        </RTLProvider>
-                      </I18nProvider>
-                    </FontProvider>
-                  </GlobalLoaderProvider>
-                </Host>
-              </I18nextProvider>
-            </NativeBaseProvider>
-          </PersistGate>
+          <QueryClientProvider client={queryClient}>
+            <PersistGate loading={<Text>qsdqsd</Text>} persistor={persistor}>
+              <NativeBaseProvider
+                theme={customTheme}
+                colorModeManager={colorModeManager}
+              >
+                <GlobalStatusBar />
+                <I18nextProvider i18n={i18n}>
+                  <Host>
+                    <GlobalLoaderProvider>
+                      <FontProvider>
+                        <I18nProvider>
+                          <RTLProvider>
+                            <MessageProvider>
+                              {/* 🔐 AUTH GOES HERE */}
+                              <AuthProvider>
+                                <Suspense
+                                  fallback={
+                                    <GlobalLoader message="Loading assets..." />
+                                  }
+                                >
+                                  <AppInner />
+                                </Suspense>
+                              </AuthProvider>
+                            </MessageProvider>
+                          </RTLProvider>
+                        </I18nProvider>
+                      </FontProvider>
+                    </GlobalLoaderProvider>
+                  </Host>
+                </I18nextProvider>
+              </NativeBaseProvider>
+            </PersistGate>
+          </QueryClientProvider>
         </Provider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

@@ -9,7 +9,8 @@
   "common": {
     "agreeTerms": "أوافق على شروط وأحكام المستخدم وأقر بإشعار الخصوصية لتطبيق NOJOM المقدم من Tools for Humanity",
     "newAccount": "حساب جديد",
-    "existingAccount": "حساب موجود"
+    "existingAccount": "هل لديك حساب مسبقًا؟",
+    "or":"أو"
   },
   "loginScreen": {
     "connectedSuccessfully": "تم الاتصال بنجاح"
@@ -43,5 +44,10 @@
       "title": "كيف يراك الآخرون",
       "subtitle": "انطباعات الآخرين وتأثيرك على محيطك الاجتماعي"
     }
-  }
+  },
+  "greeting": "مرحبا: {{email}}",
+  "withSunIn": "شخصيات مشهورة وُلدت في:",
+  "askQuestion": "اطرح سؤالاً على منجم",
+  "unsolvedIssues": "هل لديك مشاكل غير محلولة؟",
+  "search_placeholder": "ابحث عن المشاهير..."
 }

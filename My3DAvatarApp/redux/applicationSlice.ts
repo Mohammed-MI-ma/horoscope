@@ -50,11 +50,22 @@ const applicationSlice = createSlice({
         payload: { id },
       }),
     },
+    // 🔥 Logout-safe reset
+    resetApplication: (state) => {
+      state.selectedChoice = { id: null };
+      state.fontsLoaded = false;
+      // Preserve language, RTL, dark mode (system-driven)
+    },
   },
 });
 
 // 4. Export actions and reducer
-export const { setSelectedChoice, setLanguage, setDarkMode, setFontsLoaded } =
-  applicationSlice.actions;
+export const {
+  setSelectedChoice,
+  setLanguage,
+  setDarkMode,
+  setFontsLoaded,
+  resetApplication,
+} = applicationSlice.actions;
 
 export default applicationSlice.reducer;

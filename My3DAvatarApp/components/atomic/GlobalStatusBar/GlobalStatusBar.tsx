@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 const GlobalStatusBar = () => {
   return (
     <StatusBar
-      style="dark" // or "dark" or "auto"
+      style="dark"
     />
   );
 };

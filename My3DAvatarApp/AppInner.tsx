@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState, useTransition } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import Toast from 'react-native-toast-message';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+} from "react-native";
+import Toast from "react-native-toast-message";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,6 +33,10 @@ import { openDrawer } from "./redux/drawerSlice";
 import WishlistScreen from "./views/WishlistScreen/WishlistScreen";
 import { useAuth } from "./contexts/AuthContext";
 import LoginScreen from "./views/LoginScreen/ui/LoginScreen";
+import UserProfileScreen from "./views/UserProfileScreen/UserProfileScreen";
+import CelebrityDetailsScreen from "./views/CelebrityDetailsScreen/CelebrityDetailsScreen";
+import GlobalOverlay from "./components/GlobalOverlay/GlobalOverlay";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,14 +47,13 @@ const AppInner = () => {
   const [isPending, startTransition] = useTransition();
 
   const isDarkMode = useSelector(
-    (state: RootStateType) => state.application.isDarkMode
+    (state: RootStateType) => state.application.isDarkMode,
   );
   const { colorMode, toggleColorMode } = useColorMode();
   const { user, initializing } = useAuth();
   const isLoggedIn = !!user;
   const currentRouteRef = useRef<string>("");
   const [currentRoute, setCurrentRoute] = useState<string>("");
-  const dispatch = useDispatch();
   // Sync Redux → NativeBase
   useEffect(() => {
     if (
@@ -62,7 +71,6 @@ const AppInner = () => {
       hideLoader();
     });
   }, []);
-
 
   if (initializing) return <Text>Restoring session...</Text>;
 
@@ -86,85 +94,104 @@ const AppInner = () => {
         {isPending ? (
           <ActivityIndicator size="large" />
         ) : (
-          <View style={styles.container}>
-            {/* Stack takes all space above tab */}
-            <View style={styles.stackContainer}>
-              <AnimatePresence>
-                <Stack.Navigator
-                  initialRouteName="MainApp"
-                  screenOptions={{
-                    headerShown: false,
-                    animation: "none",
-                    gestureEnabled: false,
-                  }}
-                >
-                  <Stack.Screen name="MainApp" component={WelcomeScreen} />
-                  <Stack.Screen
-                    name="OnBoardingScreen"
-                    component={OnBoardingScreen}
-                  />
-                  <Stack.Screen
-                    name="WishlistScreen"
-                    component={WishlistScreen}
-                  />
-                     <Stack.Screen
-                    name="LoginScreen"
-                    component={LoginScreen}
-                  />
-                </Stack.Navigator>
-              </AnimatePresence>
-            </View>
-
-            {/* Persistent Bottom Tab */}
-            {currentRoute !== "MainApp" && (
-              <NavigationBottomTab
-                tabs={[
-                  {
-                    name: "Home",
-                    Icon: Solar,
-                    label: "اليوم",
-                    onPress: () =>
-                      /*handleTabPress("OnBoardingScreen")*/ console.log(
-                        "Go Home"
-                      ),
-                  },
-                  {
-                    name: "Profile",
-                    label: "التوافق",
-                    Icon: Love,
-
-                    onPress: () => console.log("Go Profile"),
-                  },
-                  {
-                    name: "vvvvv",
-                    label: "الدردشة",
-                    Icon: Chat,
-
-                    onPress: () => console.log("Go Home"),
-                  },
-                  {
-                    name: "azeaze",
-                    label: "التاروت",
-                    Icon: Tarrot,
-
-                    onPress: () => console.log("Go Profile"),
-                  },
-                  {
-                    name: "zereghbdv",
-                    label: "التعليم",
-                    Icon: Education,
-
-                    onPress: () => console.log("Go Home"),
-                  },
-                ]}
+          <SafeAreaProvider>
+            {/* SafeAreaView ensures content avoids notch */}
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#000000ff" }}>
+              <StatusBar
+                barStyle="light-content"
+                backgroundColor="#b6e23e"
+                translucent={false} // makes color solid
               />
-            )}
-          </View>
+              <View style={styles.container}>
+                {/* Stack takes all space above tab */}
+                <View style={styles.stackContainer}>
+                  <AnimatePresence>
+                    <Stack.Navigator
+                      initialRouteName="MainApp"
+                      screenOptions={{
+                        headerShown: false,
+                        animation: "none",
+                        gestureEnabled: false,
+                      }}
+                    >
+                      <Stack.Screen name="MainApp" component={WelcomeScreen} />
+                      <Stack.Screen
+                        name="OnBoardingScreen"
+                        component={OnBoardingScreen}
+                      />
+                      <Stack.Screen
+                        name="WishlistScreen"
+                        component={WishlistScreen}
+                      />
+                      <Stack.Screen
+                        name="UserProfileScreen"
+                        component={UserProfileScreen}
+                      />
+                      <Stack.Screen
+                        name="CelebrityDetailsScreen"
+                        component={CelebrityDetailsScreen}
+                      />
+
+                      <Stack.Screen
+                        name="LoginScreen"
+                        component={LoginScreen}
+                      />
+                    </Stack.Navigator>
+                  </AnimatePresence>
+                </View>
+
+                {/* Persistent Bottom Tab */}
+                {currentRoute !== "MainApp" && (
+                  <NavigationBottomTab
+                    tabs={[
+                      {
+                        name: "Home",
+                        Icon: Solar,
+                        label: "اليوم",
+                        onPress: () =>
+                          /*handleTabPress("OnBoardingScreen")*/ console.log(
+                            "Go Home",
+                          ),
+                      },
+                      {
+                        name: "Profile",
+                        label: "التوافق",
+                        Icon: Love,
+
+                        onPress: () => console.log("Go Profile"),
+                      },
+                      {
+                        name: "vvvvv",
+                        label: "الدردشة",
+                        Icon: Chat,
+
+                        onPress: () => console.log("Go Home"),
+                      },
+                      {
+                        name: "azeaze",
+                        label: "التاروت",
+                        Icon: Tarrot,
+
+                        onPress: () => console.log("Go Profile"),
+                      },
+                      {
+                        name: "zereghbdv",
+                        label: "التعليم",
+                        Icon: Education,
+
+                        onPress: () => console.log("Go Home"),
+                      },
+                    ]}
+                  />
+                )}
+              </View>
+            </SafeAreaView>
+          </SafeAreaProvider>
         )}
       </NavigationContainer>
       <BottomDrawer currentRouteName={currentRoute} isLoggedIn={isLoggedIn} />
-            <Toast />
-
+      <Toast />
+      <GlobalOverlay />
     </>
   );
 };

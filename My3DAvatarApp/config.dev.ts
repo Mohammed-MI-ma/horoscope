@@ -1,9 +1,7 @@
 // src/config/config.dev.ts
 
 import { global_Assets } from "./images";
-import { preloadImages } from "./utils/loadAssets";
-
-
+import { preloadImages, preloadVideos } from "./utils/loadAssets";
 
 /**
  * Preload all global assets before rendering the app.
@@ -11,7 +9,9 @@ import { preloadImages } from "./utils/loadAssets";
  */
 export async function preloadGlobalAssets(): Promise<void> {
   try {
-    await preloadImages(global_Assets, 5000);
+    await preloadImages(global_Assets);
+    await preloadVideos([require("@/assets/videos/0400-0600.mp4")]);
+
     console.log("✅ All global assets preloaded successfully.");
   } catch (e) {
     console.error("❌ Global assets preload failed", e);

@@ -4,8 +4,10 @@ import { closeDrawer, openDrawer } from "@/redux/drawerSlice";
 import { RootStateType } from "@/store";
 import { BottomDrawerControllerResult } from "@/types/BottomDrawer.types";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { I18nManager } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+const PROTECTED_ROUTES = ["OnBoardingScreen", "WishlistScreen"]; // move outside hook
 
 export function useBottomDrawerController(
   currentRouteName?: string,
@@ -16,42 +18,53 @@ export function useBottomDrawerController(
   const { loadedAssets } = useAssets();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["25%", "50%", "80%"], []);
+  const snapPoints = useMemo(() => ["25%", "50%"], []);
 
-  // List of routes that require authentication
-  const PROTECTED_ROUTES = ["OnBoardingScreen", "WishlistScreen"];
-
-  // Open/close drawer based on Redux state (optional)
+  // Track current sheet index: -1 = closed, 0+ = snap points
+  const sheetIndexRef = useRef<number>(-1);
+  // Handle sheet changes to keep Redux in sync
+  const handleSheetChange = useCallback(
+    (index: number) => {
+      sheetIndexRef.current = index;
+      if (index === -1 && open) dispatch(closeDrawer());
+    },
+    [dispatch, open]
+  );
+  // Sync BottomSheet open/close with Redux state
   useEffect(() => {
     const sheet = bottomSheetRef.current;
     if (!sheet) return;
 
-    open ? sheet.expand() : sheet.close();
+    if (open && sheetIndexRef.current === -1) {
+      sheet.expand(); // only expand if currently closed
+    } else if (!open && sheetIndexRef.current !== -1) {
+      sheet.close(); // only close if currently open
+    }
   }, [open]);
 
-  // Auto-open drawer for protected routes if not logged in
+  // Auto-open for protected routes when not logged in
   useEffect(() => {
     const sheet = bottomSheetRef.current;
     if (!sheet || !currentRouteName) return;
 
-    if (!isLoggedIn && PROTECTED_ROUTES.includes(currentRouteName)) {
-      sheet.expand(); // automatically open drawer
-      dispatch(openDrawer()); // optional: keep Redux in sync
-    } else {
-      sheet.close(); // auto-close if route changes or user logs in
-      dispatch(closeDrawer());
+    const shouldOpen =
+      !isLoggedIn && PROTECTED_ROUTES.includes(currentRouteName);
+
+    if (shouldOpen && sheetIndexRef.current === -1) {
+      sheet.expand();
+      if (!open) dispatch(openDrawer());
+    } else if (!shouldOpen && sheetIndexRef.current !== -1) {
+      sheet.close();
+      if (open) dispatch(closeDrawer());
     }
-  }, [currentRouteName, isLoggedIn]);
-
-  const handleSheetChange = (index: number) => {
-    if (index === -1) dispatch(closeDrawer());
-  };
-
-  return {
+  }, [currentRouteName, isLoggedIn, open, dispatch]);
+return {
     open,
     loadedAssets,
     bottomSheetRef,
     snapPoints,
     handleSheetChange,
+    // RTL-aware flag for icon mirroring
+    isRTL: I18nManager.isRTL,
   };
 }

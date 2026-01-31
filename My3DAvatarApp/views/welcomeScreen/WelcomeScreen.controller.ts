@@ -51,7 +51,6 @@ export const useWelcomeScreenController = (navigation: any) => {
   // PRESS HANDLER
   // -----------------------------------------------------
   const handlePress = () => {
-    audioEngine.sfx("click");
     startTransition(() => {
       navigation.navigate("OnBoardingScreen");
     });

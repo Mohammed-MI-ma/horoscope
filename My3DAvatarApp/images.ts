@@ -1,5 +1,7 @@
 // src/utils/images.ts
 
+import { Avatar } from "native-base";
+
 // ---- Base URL for all assets ----
 const BASE_URL =
   "https://raw.githubusercontent.com/Mohammed-MI-ma/horoscopeAssets/main/";
@@ -46,6 +48,14 @@ export const welcome_Assets: AssetMap = {
   logo: asset("LOGOO.png"),
   logoD: asset("LOGO_D.png"),
   stars: asset("stars.webp"),
+  avatar: asset("avatarrr.png"),
+
+  sitting: asset("worried.png"),
+  love: asset("lovee.png"),
+  loveto: asset("loveto.png"),
+
+   // Add Lottie animation here
+  pleaseLoginLottie: "https://assets3.lottiefiles.com/packages/lf20_x62chJ.json", // <- your Lottie hosted on GitHub
 };
 
 // ---- Optional arrays for iteration ----

@@ -49,10 +49,12 @@ const drawerSlice = createSlice({
       state.open = false;
       state.contentType = null;
       state.activeCategory = null;
-    },
+    }, 
+    // 🔥 Logout reset
+    resetDrawer: () => initialState,
   },
 });
 
 // 5. Export actions & reducer
-export const { openDrawer, closeDrawer } = drawerSlice.actions;
+export const { openDrawer, closeDrawer,resetDrawer} = drawerSlice.actions;
 export default drawerSlice.reducer;

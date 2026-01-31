@@ -1,8 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { MotiView } from "moti";
 import React, { useMemo } from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
-import { StarLayer } from "./StarLayer";
+import {StyleSheet, View, ViewStyle } from "react-native";
+import StarLayer from "./StarLayer";
 
 interface BackgroundGradientUIProps {
   windowWidth: number;
@@ -19,39 +19,47 @@ export const BackgroundGradientUI: React.FC<BackgroundGradientUIProps> = ({
   loadedAssets,
   children,
 }) => {
-
   // Memoized container style for gradient
   const gradientStyle: ViewStyle = useMemo(
     () => ({ width: windowWidth, height: windowHeight }),
-    [windowWidth, windowHeight]
+    [windowWidth, windowHeight],
   );
   return (
-    <View style={styles.container}>
-      {gradients.map((grad, idx) => (
-        <MotiView
-          key={idx}
-          from={{ opacity: grad.isActive ? 0 : 1 }}
-          animate={{ opacity: grad.isActive ? 1 : 0 }}
-          transition={{ type: "timing", duration: 1000 }}
-          style={StyleSheet.absoluteFill}
-        >
-          <LinearGradient
-            colors={grad.colors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={gradientStyle} // reused memoized style
-          />
-        </MotiView>
-      ))}
+    <>
+    
+      <View style={styles.container}>
+        {gradients.map((grad, idx) => (
+          <MotiView
+            key={idx}
+            from={{ opacity: grad.isActive ? 0 : 1 }}
+            animate={{ opacity: grad.isActive ? 1 : 0 }}
+            transition={{ type: "timing", duration: 500 }}
+            style={StyleSheet.absoluteFill}
+          >
+            <LinearGradient
+              colors={grad.colors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={gradientStyle} // reused memoized style
+            />
+          </MotiView>
+        ))}
 
-      <StarLayer loadedAssets={loadedAssets} windowWidth={windowWidth} windowHeight={windowHeight} />
+        <StarLayer
+          loadedAssets={loadedAssets}
+          windowWidth={windowWidth}
+          windowHeight={windowHeight}
+        />
 
-
-      {children}
-    </View>
+        {children}
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, position: "relative" },
+  container: {
+    flex: 1,
+    position: "relative",
+  },
 });

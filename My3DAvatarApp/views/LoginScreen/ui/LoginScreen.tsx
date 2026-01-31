@@ -29,7 +29,7 @@ import { welcome_Assets } from "@/images";
 //__Components__
 import { RecaptchaComponent } from "@/components/atomic/Recaptcha/Recaptcha";
 import DividerWithText from "@/components/atomic/DividerWithText/DividerWithText";
-import HeaderBack from "@/components/atomic/HeaderBack/ui/HeaderBack.ui";
+import HeaderBack from "@/components/atomic/HeaderBack/HeaderBack.ui";
 
 //__Styles__
 import { styles } from "../styles/LoginScreen.styles";

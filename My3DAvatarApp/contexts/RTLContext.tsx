@@ -16,11 +16,11 @@ export const RTLProvider = ({ children }: { children: any }) => {
   const language = useSelector((state: any) => state.application.language); // adjust the path to your slice
 
   // Local state for RTL
-  const [isRtl, setIsRtl] = useState(language === "ar" || language === "he");
+  const [isRtl, setIsRtl] = useState(language === "ar" || language === "fr");
 
   useEffect(() => {
     // Update RTL whenever language changes in Redux
-    setIsRtl(language === "ar" || language === "he");
+    setIsRtl(language === "ar" || language === "fr");
   }, [language]);
 
   // Optional setter if you want to override manually

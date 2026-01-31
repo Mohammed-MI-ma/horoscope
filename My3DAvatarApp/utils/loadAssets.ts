@@ -1,4 +1,5 @@
 import { Image } from "react-native";
+import { Asset } from "expo-asset";
 
 export type AssetMap = Record<string, string | number>;
 
@@ -36,4 +37,15 @@ export async function preloadImages<T extends AssetMap>(
   );
 
   return images;
+}
+export async function preloadVideos(videos: (string | number)[]) {
+  await Promise.all(
+    videos.map(async (video) => {
+      try {
+        await Asset.fromModule(video).downloadAsync();
+      } catch (err) {
+        console.warn("Failed to preload video:", video, err);
+      }
+    })
+  );
 }

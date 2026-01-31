@@ -25,7 +25,7 @@ export const styles: Styles = StyleSheet.create<Styles>({
   contentWrapper: {
     padding: 20,
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },

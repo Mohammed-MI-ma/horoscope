@@ -1,45 +1,70 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import React, { useCallback, useRef } from "react";
-import { Animated, Dimensions } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback } from "react";
+import { Dimensions, ImageStyle } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  runOnJS,
+} from "react-native-reanimated";
 
 const { height: screenHeight } = Dimensions.get("window");
 
-export default function SlideInEarth({ uri, width }) {
-  const translateY = useRef(new Animated.Value(screenHeight)).current;
-  const navigation = useNavigation();
+interface SlideInEarthProps {
+  uri: string;
+  width: number;
+  onRemove?: () => void; // optional callback when sliding out
+}
 
-  const animateSlide = useCallback(() => {
-    translateY.setValue(screenHeight); // reset to off-screen
-    Animated.spring(translateY, {
-      toValue: 0,
-      useNativeDriver: true,
-      tension: 20,
-      friction: 8,
-    }).start();
-  }, []);
+function SlideInEarth({ uri, width, onRemove }: SlideInEarthProps) {
+  const translateY = useSharedValue(screenHeight);
 
+  // Slide in when screen is focused
   useFocusEffect(
     useCallback(() => {
-      animateSlide();
-
-      // Reset position when leaving the screen
-      const unsubscribe = navigation.addListener("blur", () => {
-        translateY.setValue(screenHeight);
+      translateY.value = withSpring(0, {
+        damping: 12,
+        stiffness: 10,
+        mass: 1,
       });
 
-      return unsubscribe;
-    }, [])
+      return () => {
+        // Slide out when leaving the screen
+        translateY.value = withSpring(
+          screenHeight,
+          {
+            damping: 12,
+            stiffness: 10,
+            mass: 1,
+          },
+          () => {
+            // optional: notify parent that the earth can be removed
+            if (onRemove) runOnJS(onRemove)();
+          }
+        );
+      };
+    }, [translateY, onRemove])
   );
+
+  const animatedStyle = useAnimatedStyle<ImageStyle>(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
   return (
     <Animated.Image
       source={{ uri }}
       resizeMode="cover"
-      style={{
-        width,
-        height: 200,
-        transform: [{ translateY }],
-      }}
+      style={[
+        {
+          width,
+          height: 200,
+          position: "absolute",
+          bottom: 0,
+        },
+        animatedStyle,
+      ]}
     />
   );
 }
+
+export default React.memo(SlideInEarth);
